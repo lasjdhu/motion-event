@@ -1,19 +1,18 @@
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from "react-native";
 
-export type OnLoadEventPayload = {
-  url: string;
+export type MotionEventPayload = {
+  action: number;
+  x: number;
+  y: number;
+  pressure: number;
+  pointerCount: number;
 };
 
 export type MotionEventModuleEvents = {
-  onChange: (params: ChangeEventPayload) => void;
-};
-
-export type ChangeEventPayload = {
-  value: string;
+  onMotionEvent: (params: MotionEventPayload) => void;
 };
 
 export type MotionEventViewProps = {
-  url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
+  onMotionEvent: (event: { nativeEvent: MotionEventPayload }) => void;
   style?: StyleProp<ViewStyle>;
 };
