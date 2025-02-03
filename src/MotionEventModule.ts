@@ -1,12 +1,7 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireNativeModule } from "expo";
 
-import { MotionEventModuleEvents } from './MotionEvent.types';
+import { MotionEventModuleEvents } from "./MotionEvent.types";
 
-declare class MotionEventModule extends NativeModule<MotionEventModuleEvents> {
-  PI: number;
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
-}
+declare class MotionEventModule extends NativeModule<MotionEventModuleEvents> {}
 
-// This call loads the native module object from the JSI.
-export default requireNativeModule<MotionEventModule>('MotionEvent');
+export default requireNativeModule<MotionEventModule>("MotionEvent");

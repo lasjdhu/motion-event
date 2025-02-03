@@ -12,14 +12,25 @@
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
-    "open:ios": "xed example/ios",
-    "open:android": "open -a \"Android Studio\" example/android"
+    "style": "prettier --write .",
+    "open:android": "open -a \"Android Studio\" example/android",
+    "start:example": "cd example && npx expo start",
+    "android:example": "cd example && npx expo run:android",
+    "watch": "tsc --watch"
   },
+  "platforms": [
+    "android"
+  ],
   "keywords": [
     "react-native",
     "expo",
     "motion-event",
     "MotionEvent"
+  ],
+  "files": [
+    "build",
+    "android",
+    "example"
   ],
   "repository": "https://github.com/lasjdhu/motion-event",
   "bugs": {
@@ -28,16 +39,15 @@
   "author": "Dmitrii Ivanushkin <dmitrii.ivanushkin@protonmail.com> (https://github.com/lasjdhu)",
   "license": "MIT",
   "homepage": "https://github.com/lasjdhu/motion-event#readme",
-  "dependencies": {},
   "devDependencies": {
     "@types/react": "~18.3.12",
-    "expo-module-scripts": "^4.0.3",
     "expo": "~52.0.0",
+    "expo-module-scripts": "^4.0.3",
+    "prettier": "^3.4.2",
     "react-native": "0.76.0"
   },
   "peerDependencies": {
     "expo": "*",
-    "react": "*",
     "react-native": "*"
   }
 }
