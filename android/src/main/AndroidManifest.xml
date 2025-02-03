@@ -1,2 +1,5 @@
-<manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="expo.modules.motionevent">
+  <application>
+  </application>
 </manifest>
+
