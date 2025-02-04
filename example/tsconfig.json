@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "motion-event": ["../src/index"],
+      "motion-event/*": ["../src/*"]
+    }
+  }
+}
