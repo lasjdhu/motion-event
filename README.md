@@ -12,8 +12,8 @@ The module is being actively worked on, and updates will be made to the README a
 
 ## 🎨 Preview
 
-<p align="center">
-  <img src="readme-assets/screenshot.png" alt="Preview of Motion Event" width="500"/>
+<p>
+  <img src="readme-assets/screenshot.png" alt="Preview of Motion Event" width="200"/>
 </p>
 
 ## 🚀 Features
