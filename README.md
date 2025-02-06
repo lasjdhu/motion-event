@@ -11,7 +11,7 @@ The module is being actively worked on, and updates will be made to the README a
 ## 🎨 Preview
 
 <p align="center">
-  <img src="readme-assets/screenshot.png" alt="Preview of Motion Event" width="350"/>
+  <img src="readme-assets/screenshot.jpg" alt="Preview of Motion Event" width="350"/>
 </p>
 
 ## ⚙️ Usage
