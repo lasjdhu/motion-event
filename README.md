@@ -22,20 +22,39 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 
 export default function App() {
-  const [events, setEvents] = useState<string | null>(null);
+  const [motionEvent, setMotionEvent] = useState<MotionEventPayload | null>(null);
+  const [gestureEvent, setGestureEvent] = useState<GestureEventPayload | null>(null);
+  const [targetFPS, setTargetFPS] = useState(30);
 
-  const handleMotionEvent = (event: { nativeEvent: any }) => {
-    console.log("Motion Event:", event.nativeEvent);
-    setEvents(JSON.stringify(event.nativeEvent, null, 2));
+  const handleMotionEvent = (event: { nativeEvent: MotionEventPayload }) => {
+    setMotionEvent(event.nativeEvent);
+  };
+
+  const handleGestureEvent = (event: { nativeEvent: GestureEventPayload }) => {
+    setGestureEvent(event.nativeEvent);
   };
 
   return (
     <View>
-      <Text>Touch anywhere below to capture motion events:</Text>
       <MotionEventView
+        targetFPS={targetFPS}
         onMotionEvent={handleMotionEvent}
+        onGestureEvent={handleGestureEvent}
       />
-      <Text>{events}</Text>
+
+      <Text>Motion Event:</Text>
+      <Text>
+        {motionEvent
+          ? JSON.stringify(motionEvent, null, 2)
+          : "No motion events yet"}
+      </Text>
+
+      <Text>Gesture Event:</Text>
+      <Text>
+        {gestureEvent
+          ? JSON.stringify(gestureEvent, null, 2)
+          : "No gesture events yet"}
+      </Text>
     </View>
   );
 }
