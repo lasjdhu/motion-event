@@ -7,14 +7,15 @@ class MotionEventModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("MotionEvent")
 
-    Events("onMotionEvent", "onGestureEvent")
+    Events("onMotionEvent")
 
     View(MotionEventView::class) {
-      Events("onMotionEvent", "onGestureEvent")
+      Events("onMotionEvent")
 
-      Prop(name = "targetFPS") { view, value: Int ->
+      Prop("targetFPS") { view: MotionEventView, value: Int ->
         view.setTargetFPS(value)
       }
     }
   }
 }
+
