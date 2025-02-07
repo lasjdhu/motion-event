@@ -22,8 +22,12 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 
 export default function App() {
-  const [motionEvent, setMotionEvent] = useState<MotionEventPayload | null>(null);
-  const [gestureEvent, setGestureEvent] = useState<GestureEventPayload | null>(null);
+  const [motionEvent, setMotionEvent] = useState<MotionEventPayload | null>(
+    null
+  );
+  const [gestureEvent, setGestureEvent] = useState<GestureEventPayload | null>(
+    null
+  );
   const [targetFPS, setTargetFPS] = useState(30);
 
   const handleMotionEvent = (event: { nativeEvent: MotionEventPayload }) => {
@@ -66,4 +70,3 @@ export default function App() {
 - Capture all types of motion events in a simple and efficient way.
 - Easy to use in Expo projects.
 - Written in TypeScript for better developer experience and type safety.
-
