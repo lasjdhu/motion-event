@@ -1,6 +1,6 @@
-import type { ViewProps } from "react-native";
+import { EventSubscription } from "react-native";
 
-export type PointerCoords = {
+export interface MotionEventCoords {
   orientation: number;
   pressure: number;
   size: number;
@@ -10,14 +10,14 @@ export type PointerCoords = {
   touchMinor: number;
   x: number;
   y: number;
-};
+}
 
-export type PointerProperties = {
+export interface MotionEventProperties {
   id: number;
   toolType: number;
-};
+}
 
-export type MotionEventPayload = {
+export interface MotionEvent {
   action: number;
   actionMasked: number;
   actionIndex: number;
@@ -27,8 +27,8 @@ export type MotionEventPayload = {
   deviceId: number;
   source: number;
   pointerCount: number;
-  pointerCoords: PointerCoords[];
-  pointerProperties: PointerProperties[];
+  pointerCoords: MotionEventCoords[];
+  pointerProperties: MotionEventProperties[];
   rawX: number;
   rawY: number;
   xPrecision: number;
@@ -36,14 +36,19 @@ export type MotionEventPayload = {
   velocityX: number;
   velocityY: number;
   fps: number;
-  target: number;
-};
+}
 
-export type MotionEventModuleEvents = {
-  onMotionEvent: (params: MotionEventPayload) => void;
-};
+export type MotionEventName = "onMotionEvent";
 
-export type MotionEventViewProps = {
-  onMotionEvent?: (event: { nativeEvent: MotionEventPayload }) => void;
-  targetFPS?: number;
-} & ViewProps;
+export type MotionEventListener = (event: MotionEvent) => void;
+
+export interface MotionEventModule {
+  startListening(): void;
+  stopListening(): void;
+  setTargetFPS(fps: number): void;
+  addListener(
+    eventName: MotionEventName,
+    // eslint-disable-next-line prettier/prettier
+    listener: MotionEventListener
+  ): EventSubscription;
+}

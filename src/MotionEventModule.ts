@@ -1,7 +1,5 @@
-import { NativeModule, requireNativeModule } from "expo";
+import { requireNativeModule } from "expo-modules-core";
 
-import { MotionEventModuleEvents } from "./MotionEvent.types";
-
-declare class MotionEventModule extends NativeModule<MotionEventModuleEvents> {}
+import { MotionEventModule } from "./MotionEvent.types";
 
 export default requireNativeModule<MotionEventModule>("MotionEvent");
