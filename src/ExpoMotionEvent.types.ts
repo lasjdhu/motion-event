@@ -1,4 +1,20 @@
-import { EventSubscription } from "react-native";
+import { EventSubscription } from "expo-modules-core";
+
+export const MotionEventActions = {
+  DOWN: 0,
+  UP: 1,
+  MOVE: 2,
+  CANCEL: 3,
+  POINTER_DOWN: 5,
+  POINTER_UP: 6,
+} as const;
+
+export const ToolTypes = {
+  FINGER: 1,
+  STYLUS: 2,
+  MOUSE: 3,
+  ERASER: 4,
+} as const;
 
 export interface ExpoMotionEventCoords {
   orientation: number;
@@ -38,8 +54,17 @@ export interface ExpoMotionEvent {
   fps: number;
 }
 
-export type ExpoMotionEventName = "onExpoMotionEvent";
+export interface ExpoMotionEventError {
+  code: string;
+  message: string;
+  details?: any;
+}
 
+export type ExpoMotionEventResult =
+  | { type: "success"; data: ExpoMotionEvent }
+  | { type: "error"; error: ExpoMotionEventError };
+
+export type ExpoMotionEventName = "onExpoMotionEvent";
 export type ExpoMotionEventListener = (event: ExpoMotionEvent) => void;
 
 export interface ExpoMotionEventModule {
