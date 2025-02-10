@@ -1,6 +1,6 @@
 {
   "platforms": ["android"],
   "android": {
-    "modules": ["expo.modules.motionevent.MotionEventModule"]
+    "modules": ["expo.modules.motionevent.ExpoMotionEventModule"]
   }
 }

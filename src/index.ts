@@ -1,38 +1,52 @@
 import { EventSubscription } from "expo-modules-core";
 
 import {
-  MotionEvent,
-  MotionEventListener,
-  MotionEventName,
-  MotionEventCoords,
-  MotionEventProperties,
-} from "./MotionEvent.types";
-import MotionEventModule from "./MotionEventModule";
+  ExpoMotionEvent,
+  ExpoMotionEventListener,
+  ExpoMotionEventName,
+  ExpoMotionEventCoords,
+  ExpoMotionEventProperties,
+  MotionEventActions,
+  ToolTypes,
+  ExpoMotionEventError,
+  ExpoMotionEventResult,
+} from "./ExpoMotionEvent.types";
+import ExpoMotionEventModule from "./ExpoMotionEventModule";
 
 export function startListening(): void {
-  MotionEventModule.startListening();
+  try {
+    ExpoMotionEventModule.startListening();
+  } catch (error) {
+    console.error("Failed to start listening:", error);
+  }
 }
 
 export function stopListening(): void {
-  MotionEventModule.stopListening();
+  try {
+    ExpoMotionEventModule.stopListening();
+  } catch (error) {
+    console.error("Failed to stop listening:", error);
+  }
 }
 
 export function setTargetFPS(fps: number): void {
-  MotionEventModule.setTargetFPS(fps);
+  ExpoMotionEventModule.setTargetFPS(fps);
 }
 
-export function addMotionEventListener(
-  // eslint-disable-next-line prettier/prettier
-  listener: MotionEventListener
+export function addExpoMotionEventListener(
+  listener: ExpoMotionEventListener,
 ): EventSubscription {
-  return MotionEventModule.addListener("onMotionEvent", listener);
+  return ExpoMotionEventModule.addListener("onExpoMotionEvent", listener);
 }
 
+export { MotionEventActions, ToolTypes };
 export type {
-  MotionEvent,
-  MotionEventCoords,
-  MotionEventProperties,
-  MotionEventListener,
-  MotionEventName,
+  ExpoMotionEvent,
+  ExpoMotionEventCoords,
+  ExpoMotionEventProperties,
+  ExpoMotionEventListener,
+  ExpoMotionEventName,
+  ExpoMotionEventError,
+  ExpoMotionEventResult,
   EventSubscription,
 };
