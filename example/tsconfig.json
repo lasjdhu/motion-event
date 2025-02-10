@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "motion-event": ["../src/index"],
-      "motion-event/*": ["../src/*"]
+      "expo-motion-event": ["../src/index"],
+      "expo-motion-event/*": ["../src/*"]
     }
   }
 }
