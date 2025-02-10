@@ -9,11 +9,12 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
-    "ts:check": "expo-module typecheck",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "style": "prettier --write .",
+    "style:check": "prettier --check .",
+    "ts:check": "tsc --noEmit",
     "android:example": "cd example && npx expo run:android"
   },
   "platforms": [
