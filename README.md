@@ -18,9 +18,7 @@
 
 ## 🎨 Preview
 
-```sh
-#TODO
-```
+<img alt="Example" src="readme-assets/example.gif" width="250"/>
 
 ## 🔨 API
 
