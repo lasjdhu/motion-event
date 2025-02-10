@@ -1,182 +1,179 @@
-import { MotionEventView } from "motion-event";
-import type { MotionEventPayload } from "motion-event";
-import React, { useState } from "react";
 import {
-  Text,
+  MotionEvent,
+  startListening,
+  stopListening,
+  setTargetFPS,
+  addMotionEventListener,
+} from "motion-event";
+import React, { useEffect, useState } from "react";
+import {
   View,
-  StyleSheet,
-  TouchableOpacity,
+  Text,
+  TextInput,
   ScrollView,
-  Button,
+  StyleSheet,
+  SafeAreaView,
+  Pressable,
 } from "react-native";
 
-const FPS_OPTIONS = [1, 30, 60, 120];
-
-export default function App() {
-  const [motionEvent, setMotionEvent] = useState<MotionEventPayload | null>(
-    null
-  );
-  const [targetFPS, setTargetFPS] = useState(30);
-
-  const handleMotionEvent = (event: { nativeEvent: MotionEventPayload }) => {
-    setMotionEvent(event.nativeEvent);
-  };
-
+function EventDataSection({
+  title,
+  data,
+}: {
+  title: string;
+  data: Record<string, string>;
+}) {
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Motion Event Demo</Text>
-        <View style={styles.fpsContainer}>
-          {FPS_OPTIONS.map((fps) => (
-            <TouchableOpacity
-              key={fps}
-              style={[
-                styles.fpsButton,
-                targetFPS === fps && styles.fpsButtonActive,
-              ]}
-              onPress={() => setTargetFPS(fps)}
-            >
-              <Text
-                style={[
-                  styles.fpsText,
-                  targetFPS === fps && styles.fpsTextActive,
-                ]}
-              >
-                {fps} FPS
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.motionContainer}>
-        <MotionEventView
-          style={styles.motionArea}
-          targetFPS={targetFPS}
-          onMotionEvent={handleMotionEvent}
-        >
-          <Text style={styles.motionAreaText}>
-            Touch and move around this area
-          </Text>
-          <Button
-            title="Press me"
-            onPress={() => console.log("Button pressed")}
-          />
-          <Text style={styles.motionAreaSubtext}>
-            Events will be logged below
-          </Text>
-        </MotionEventView>
-      </View>
-
-      <ScrollView
-        style={styles.eventsContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.eventTitle}>Motion Event Data:</Text>
-        <Text style={styles.eventText}>
-          {motionEvent
-            ? JSON.stringify(motionEvent, null, 2)
-            : "No motion events yet"}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {Object.entries(data).map(([key, value]) => (
+        <Text key={key} style={styles.dataRow}>
+          <Text style={styles.dataLabel}>{key}:</Text> {value}
         </Text>
-      </ScrollView>
+      ))}
     </View>
   );
 }
 
+export default function App() {
+  const [event, setEvent] = useState<MotionEvent | null>(null);
+  const [fps, setFps] = useState("60");
+
+  useEffect(() => {
+    startListening();
+    setTargetFPS(Number(fps));
+
+    const subscription = addMotionEventListener((motionEvent) => {
+      console.log(motionEvent);
+      setEvent(motionEvent);
+    });
+
+    return () => {
+      subscription.remove();
+      stopListening();
+    };
+  }, [fps]);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.hStack}>
+          <Pressable onPress={startListening} style={styles.button}>
+            <Text style={styles.buttonLabel}>Start</Text>
+          </Pressable>
+          <Pressable onPress={stopListening} style={styles.button}>
+            <Text style={styles.buttonLabel}>Stop</Text>
+          </Pressable>
+        </View>
+        <View style={styles.hStack}>
+          <Text style={styles.label}>Target FPS:</Text>
+          <TextInput
+            style={styles.input}
+            value={fps}
+            onChangeText={setFps}
+            keyboardType="numeric"
+            maxLength={3}
+          />
+        </View>
+      </View>
+
+      <ScrollView style={styles.scrollView}>
+        {event ? (
+          <View style={styles.eventContainer}>
+            <EventDataSection
+              title="General"
+              data={{
+                "Action type": String(event.action),
+                "Action Index": String(event.actionIndex),
+                "Action Masked": String(event.actionMasked),
+                "Device ID": String(event.deviceId),
+                "Down Time": String(event.downTime),
+                "Edge Flags": String(event.edgeFlags),
+                "Event Time": String(event.eventTime),
+                "Current FPS": String(event.fps),
+                "Pointer Count": String(event.pointerCount),
+                "Raw X": event.rawX.toFixed(2),
+                "Raw Y": event.rawY.toFixed(2),
+                "Source type": String(event.source),
+                "Velocity X": event.velocityX.toFixed(2),
+                "Velocity Y": event.velocityY.toFixed(2),
+                "Precision X": event.xPrecision.toFixed(4),
+                "Precision Y": event.yPrecision.toFixed(4),
+              }}
+            />
+
+            {event.pointerCoords.map((coord, index) => (
+              <EventDataSection
+                key={index}
+                title={`Pointer ${index + 1}`}
+                data={{
+                  Orientation: coord.orientation.toFixed(2),
+                  Pressure: coord.pressure.toFixed(2),
+                  Size: coord.size.toFixed(2),
+                  "Tool Major": coord.toolMajor.toFixed(2),
+                  "Tool Minor": coord.toolMinor.toFixed(2),
+                  "Touch Major": coord.touchMajor.toFixed(2),
+                  "Touch Minor": coord.touchMinor.toFixed(2),
+                  X: coord.x.toFixed(1),
+                  Y: coord.y.toFixed(1),
+                  ID: String(event.pointerProperties[index].id),
+                  "Tool Type": String(event.pointerProperties[index].toolType),
+                }}
+              />
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.waiting}>Waiting for motion events...</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
+  container: { flex: 1, backgroundColor: "#f0f2f5" },
   header: {
-    padding: 20,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1a1a1a",
-    marginBottom: 16,
-  },
-  fpsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  fpsButton: {
-    paddingVertical: 10,
-    marginHorizontal: 4,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    minWidth: 60,
     alignItems: "center",
-  },
-  fpsButtonActive: {
-    backgroundColor: "#2196F3",
-  },
-  fpsText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#666",
-  },
-  fpsTextActive: {
-    color: "#fff",
-  },
-  motionContainer: {
-    padding: 20,
-  },
-  motionArea: {
-    height: 200,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  motionAreaText: {
-    fontSize: 18,
-    textAlign: "center",
-    color: "#666",
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  motionAreaSubtext: {
-    fontSize: 14,
-    color: "#999",
-    fontWeight: "400",
-  },
-  eventsContainer: {
-    flex: 1,
-    marginHorizontal: 20,
-    marginBottom: 20,
     padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 16,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e4e8",
+  },
+  hStack: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
+  button: {
+    width: 120,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#348352",
+    borderRadius: 4,
+    marginHorizontal: 8,
+  },
+  buttonLabel: { fontSize: 16, color: "white" },
+  label: { fontSize: 16, marginRight: 8 },
+  input: {
+    borderWidth: 1,
+    borderColor: "#e1e4e8",
+    borderRadius: 4,
+    padding: 8,
+    width: 60,
+    textAlign: "center",
+  },
+  scrollView: { flex: 1 },
+  waiting: { textAlign: "center", marginTop: 24, fontSize: 16, color: "#666" },
+  eventContainer: { padding: 16 },
+  section: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1a1a1a",
-    marginBottom: 12,
-  },
-  eventText: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: "#333",
-    fontFamily: "monospace",
-  },
+  sectionTitle: { fontSize: 18, fontWeight: "600", marginBottom: 12 },
+  dataRow: { fontSize: 15, marginBottom: 6 },
+  dataLabel: { fontWeight: "500" },
 });

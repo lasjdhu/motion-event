@@ -13,10 +13,7 @@
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "style": "prettier --write .",
-    "open:android": "open -a \"Android Studio\" example/android",
-    "start:example": "cd example && npx expo start",
-    "android:example": "cd example && npx expo run:android",
-    "watch": "tsc --watch"
+    "android:example": "cd example && npx expo run:android"
   },
   "platforms": [
     "android"
