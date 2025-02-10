@@ -1,11 +1,11 @@
 import {
-  MotionEvent,
+  ExpoMotionEvent,
   startListening,
   stopListening,
   setTargetFPS,
-  addMotionEventListener,
-} from "motion-event";
-import React, { useEffect, useState } from "react";
+  addExpoMotionEventListener,
+} from "expo-motion-event";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -16,36 +16,72 @@ import {
   Pressable,
 } from "react-native";
 
-function EventDataSection({
-  title,
-  data,
-}: {
-  title: string;
-  data: Record<string, string>;
-}) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {Object.entries(data).map(([key, value]) => (
-        <Text key={key} style={styles.dataRow}>
-          <Text style={styles.dataLabel}>{key}:</Text> {value}
-        </Text>
-      ))}
-    </View>
-  );
-}
+const EventDataSection = React.memo(
+  ({ title, data }: { title: string; data: Record<string, string> }) => {
+    const entries = useMemo(() => Object.entries(data), [data]);
+
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {entries.map(([key, value]) => (
+          <Text key={key} style={styles.dataRow}>
+            <Text style={styles.dataLabel}>{key}:</Text> {value}
+          </Text>
+        ))}
+      </View>
+    );
+  },
+);
 
 export default function App() {
-  const [event, setEvent] = useState<MotionEvent | null>(null);
+  const [event, setEvent] = useState<ExpoMotionEvent | null>(null);
   const [fps, setFps] = useState("60");
+
+  const formattedGeneralData = useMemo(() => {
+    if (!event) return null;
+    return {
+      "Action type": String(event.action),
+      "Action Index": String(event.actionIndex),
+      "Action Masked": String(event.actionMasked),
+      "Device ID": String(event.deviceId),
+      "Down Time": String(event.downTime),
+      "Edge Flags": String(event.edgeFlags),
+      "Event Time": String(event.eventTime),
+      "Current FPS": String(event.fps),
+      "Pointer Count": String(event.pointerCount),
+      "Raw X": event.rawX.toFixed(2),
+      "Raw Y": event.rawY.toFixed(2),
+      "Source type": String(event.source),
+      "Velocity X": event.velocityX.toFixed(2),
+      "Velocity Y": event.velocityY.toFixed(2),
+      "Precision X": event.xPrecision.toFixed(4),
+      "Precision Y": event.yPrecision.toFixed(4),
+    };
+  }, [event]);
+
+  const formattedPointerData = useMemo(() => {
+    if (!event) return [];
+    return event.pointerCoords.map((coord, index) => ({
+      Orientation: coord.orientation.toFixed(2),
+      Pressure: coord.pressure.toFixed(2),
+      Size: coord.size.toFixed(2),
+      "Tool Major": coord.toolMajor.toFixed(2),
+      "Tool Minor": coord.toolMinor.toFixed(2),
+      "Touch Major": coord.touchMajor.toFixed(2),
+      "Touch Minor": coord.touchMinor.toFixed(2),
+      X: coord.x.toFixed(1),
+      Y: coord.y.toFixed(1),
+      ID: String(event.pointerProperties[index].id),
+      "Tool Type": String(event.pointerProperties[index].toolType),
+    }));
+  }, [event]);
 
   useEffect(() => {
     startListening();
     setTargetFPS(Number(fps));
 
-    const subscription = addMotionEventListener((motionEvent) => {
-      console.log(motionEvent);
-      setEvent(motionEvent);
+    const subscription = addExpoMotionEventListener((expoMotionEvent) => {
+      setEvent(expoMotionEvent);
     });
 
     return () => {
@@ -78,47 +114,15 @@ export default function App() {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {event ? (
+        {event && formattedGeneralData ? (
           <View style={styles.eventContainer}>
-            <EventDataSection
-              title="General"
-              data={{
-                "Action type": String(event.action),
-                "Action Index": String(event.actionIndex),
-                "Action Masked": String(event.actionMasked),
-                "Device ID": String(event.deviceId),
-                "Down Time": String(event.downTime),
-                "Edge Flags": String(event.edgeFlags),
-                "Event Time": String(event.eventTime),
-                "Current FPS": String(event.fps),
-                "Pointer Count": String(event.pointerCount),
-                "Raw X": event.rawX.toFixed(2),
-                "Raw Y": event.rawY.toFixed(2),
-                "Source type": String(event.source),
-                "Velocity X": event.velocityX.toFixed(2),
-                "Velocity Y": event.velocityY.toFixed(2),
-                "Precision X": event.xPrecision.toFixed(4),
-                "Precision Y": event.yPrecision.toFixed(4),
-              }}
-            />
+            <EventDataSection title="General" data={formattedGeneralData} />
 
-            {event.pointerCoords.map((coord, index) => (
+            {formattedPointerData.map((pointerData, index) => (
               <EventDataSection
                 key={index}
                 title={`Pointer ${index + 1}`}
-                data={{
-                  Orientation: coord.orientation.toFixed(2),
-                  Pressure: coord.pressure.toFixed(2),
-                  Size: coord.size.toFixed(2),
-                  "Tool Major": coord.toolMajor.toFixed(2),
-                  "Tool Minor": coord.toolMinor.toFixed(2),
-                  "Touch Major": coord.touchMajor.toFixed(2),
-                  "Touch Minor": coord.touchMinor.toFixed(2),
-                  X: coord.x.toFixed(1),
-                  Y: coord.y.toFixed(1),
-                  ID: String(event.pointerProperties[index].id),
-                  "Tool Type": String(event.pointerProperties[index].toolType),
-                }}
+                data={pointerData}
               />
             ))}
           </View>

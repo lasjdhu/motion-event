@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "motion-event-example",
-    "slug": "motion-event-example",
+    "name": "expo-motion-event-example",
+    "slug": "expo-motion-event-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
