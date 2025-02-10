@@ -14,91 +14,61 @@ class ExpoMotionEventModule : Module() {
   private var isListening: Boolean = false
   private var originalWindowCallback: android.view.Window.Callback? = null
 
+  private val tempPointerCoords = MotionEvent.PointerCoords()
+  private val tempPointerProps = MotionEvent.PointerProperties()
+
   override fun definition() = ModuleDefinition {
     Name("ExpoMotionEvent")
     Events("onExpoMotionEvent")
 
     Function("startListening") {
-      try {
-        if (!isListening) {
-          isListening = true
-          velocityTracker?.recycle()
-          velocityTracker = VelocityTracker.obtain()
-          setupTouchEventInterceptor()
-          Log.d("ExpoMotionEventModule", "Started listening")
-        }
-        true
-      } catch (e: Exception) {
-        Log.e("ExpoMotionEventModule", "Error starting listener", e)
-        false
+      if (!isListening) {
+        isListening = true
+        velocityTracker?.clear() ?: run { velocityTracker = VelocityTracker.obtain() }
+        setupTouchEventInterceptor()
       }
+      true
     }
 
     Function("stopListening") {
-      try {
-        isListening = false
-        velocityTracker?.recycle()
-        velocityTracker = null
-        restoreOriginalWindowCallback()
-        Log.d("ExpoMotionEventModule", "Stopped listening")
-        true
-      } catch (e: Exception) {
-        Log.e("ExpoMotionEventModule", "Error stopping listener", e)
-        false
-      }
+      isListening = false
+      velocityTracker?.clear()
+      restoreOriginalWindowCallback()
+      true
     }
 
     Function("setTargetFPS") { fps: Int ->
-      try {
-        targetFPS = fps.coerceIn(1, 120)
-        Log.d("ExpoMotionEventModule", "Set FPS to $targetFPS")
-        true
-      } catch (e: Exception) {
-        Log.e("ExpoMotionEventModule", "Error setting FPS", e)
-        false
-      }
+      targetFPS = fps.coerceIn(1, 120)
+      true
     }
 
     OnDestroy {
       restoreOriginalWindowCallback()
-      velocityTracker?.recycle()
-      velocityTracker = null
+      velocityTracker?.clear()
       isListening = false
     }
   }
 
   private fun setupTouchEventInterceptor() {
-    try {
-      appContext.activityProvider?.currentActivity?.runOnUiThread {
-        appContext.activityProvider?.currentActivity?.let { activity ->
-          val window = activity.window
-          originalWindowCallback = window.callback
-          window.callback = object : android.view.Window.Callback by originalWindowCallback!! {
-            override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-              if (isListening) {
-                handleTouchEvent(event)
-              }
-              return originalWindowCallback?.dispatchTouchEvent(event) ?: false
-            }
+    val activity = appContext.activityProvider?.currentActivity ?: return
+    val window = activity.window
+    originalWindowCallback = window.callback
+    originalWindowCallback?.let { callback ->
+      window.callback = object : android.view.Window.Callback by callback {
+        override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+          if (isListening) {
+            handleTouchEvent(event)
           }
+          return callback.dispatchTouchEvent(event)
         }
       }
-    } catch (e: Exception) {
-      Log.e("ExpoMotionEventModule", "Error setting up touch interceptor", e)
     }
   }
 
   private fun restoreOriginalWindowCallback() {
-    try {
-      appContext.activityProvider?.currentActivity?.runOnUiThread {
-        appContext.activityProvider?.currentActivity?.let { activity ->
-          activity.window.callback = originalWindowCallback ?: activity.window.callback
-          originalWindowCallback = null
-        }
-      }
-    } catch (e: Exception) {
-      Log.e("ExpoMotionEventModule", "Error restoring original window callback", e)
-    }
+    val activity = appContext.activityProvider?.currentActivity ?: return
+    activity.window.callback = originalWindowCallback ?: activity.window.callback
+    originalWindowCallback = null
   }
 
   private fun handleTouchEvent(event: MotionEvent) {
@@ -110,16 +80,13 @@ class ExpoMotionEventModule : Module() {
     if (currentTime - lastEventTime >= frameInterval) {
       lastEventTime = currentTime
 
-      try {
-        velocityTracker?.addMovement(event)
-        velocityTracker?.computeCurrentVelocity(1000)
-
-        val eventData = createEventData(event)
-        sendEvent("onExpoMotionEvent", eventData)
-        Log.d("ExpoMotionEventModule", "Event sent: action=${event.action}, x=${event.x}, y=${event.y}")
-      } catch (e: Exception) {
-        Log.e("ExpoMotionEventModule", "Error processing motion event", e)
+      velocityTracker?.apply {
+        addMovement(event)
+        computeCurrentVelocity(1000)
       }
+
+      val eventData = createEventData(event)
+      sendEvent("onExpoMotionEvent", eventData)
     }
   }
 
@@ -130,30 +97,27 @@ class ExpoMotionEventModule : Module() {
       val pointerProperties = mutableListOf<Map<String, Any>>()
 
       for (i in 0 until pointerCount) {
-        val coords = MotionEvent.PointerCoords()
-        val props = MotionEvent.PointerProperties()
-
-        event.getPointerCoords(i, coords)
-        event.getPointerProperties(i, props)
+        event.getPointerCoords(i, tempPointerCoords)
+        event.getPointerProperties(i, tempPointerProps)
 
         pointerCoords.add(
           mapOf(
-            "orientation" to coords.orientation,
-            "pressure" to coords.pressure,
-            "size" to coords.size,
-            "toolMajor" to coords.toolMajor,
-            "toolMinor" to coords.toolMinor,
-            "touchMajor" to coords.touchMajor,
-            "touchMinor" to coords.touchMinor,
-            "x" to coords.x,
-            "y" to coords.y
+            "orientation" to tempPointerCoords.orientation,
+            "pressure" to tempPointerCoords.pressure,
+            "size" to tempPointerCoords.size,
+            "toolMajor" to tempPointerCoords.toolMajor,
+            "toolMinor" to tempPointerCoords.toolMinor,
+            "touchMajor" to tempPointerCoords.touchMajor,
+            "touchMinor" to tempPointerCoords.touchMinor,
+            "x" to tempPointerCoords.x,
+            "y" to tempPointerCoords.y
           )
         )
 
         pointerProperties.add(
           mapOf(
-            "id" to props.id,
-            "toolType" to props.toolType
+            "id" to tempPointerProps.id,
+            "toolType" to tempPointerProps.toolType
           )
         )
       }
