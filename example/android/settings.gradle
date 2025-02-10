@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'motion-event-example'
+rootProject.name = 'expo-motion-event-example'
 
 dependencyResolutionManagement {
   versionCatalogs {

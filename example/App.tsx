@@ -1,10 +1,10 @@
 import {
-  MotionEvent,
+  ExpoMotionEvent,
   startListening,
   stopListening,
   setTargetFPS,
-  addMotionEventListener,
-} from "motion-event";
+  addExpoMotionEventListener,
+} from "expo-motion-event";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -36,16 +36,16 @@ function EventDataSection({
 }
 
 export default function App() {
-  const [event, setEvent] = useState<MotionEvent | null>(null);
+  const [event, setEvent] = useState<ExpoMotionEvent | null>(null);
   const [fps, setFps] = useState("60");
 
   useEffect(() => {
     startListening();
     setTargetFPS(Number(fps));
 
-    const subscription = addMotionEventListener((motionEvent) => {
-      console.log(motionEvent);
-      setEvent(motionEvent);
+    const subscription = addExpoMotionEventListener((expoMotionEvent) => {
+      console.log(expoMotionEvent);
+      setEvent(expoMotionEvent);
     });
 
     return () => {

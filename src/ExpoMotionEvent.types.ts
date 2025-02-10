@@ -1,6 +1,6 @@
 import { EventSubscription } from "react-native";
 
-export interface MotionEventCoords {
+export interface ExpoMotionEventCoords {
   orientation: number;
   pressure: number;
   size: number;
@@ -12,12 +12,12 @@ export interface MotionEventCoords {
   y: number;
 }
 
-export interface MotionEventProperties {
+export interface ExpoMotionEventProperties {
   id: number;
   toolType: number;
 }
 
-export interface MotionEvent {
+export interface ExpoMotionEvent {
   action: number;
   actionMasked: number;
   actionIndex: number;
@@ -27,8 +27,8 @@ export interface MotionEvent {
   deviceId: number;
   source: number;
   pointerCount: number;
-  pointerCoords: MotionEventCoords[];
-  pointerProperties: MotionEventProperties[];
+  pointerCoords: ExpoMotionEventCoords[];
+  pointerProperties: ExpoMotionEventProperties[];
   rawX: number;
   rawY: number;
   xPrecision: number;
@@ -38,17 +38,16 @@ export interface MotionEvent {
   fps: number;
 }
 
-export type MotionEventName = "onMotionEvent";
+export type ExpoMotionEventName = "onExpoMotionEvent";
 
-export type MotionEventListener = (event: MotionEvent) => void;
+export type ExpoMotionEventListener = (event: ExpoMotionEvent) => void;
 
-export interface MotionEventModule {
+export interface ExpoMotionEventModule {
   startListening(): void;
   stopListening(): void;
   setTargetFPS(fps: number): void;
   addListener(
-    eventName: MotionEventName,
-    // eslint-disable-next-line prettier/prettier
-    listener: MotionEventListener
+    eventName: ExpoMotionEventName,
+    listener: ExpoMotionEventListener,
   ): EventSubscription;
 }

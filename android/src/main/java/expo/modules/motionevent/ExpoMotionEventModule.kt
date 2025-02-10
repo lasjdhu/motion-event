@@ -7,7 +7,7 @@ import android.view.VelocityTracker
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-class MotionEventModule : Module() {
+class ExpoMotionEventModule : Module() {
   private var velocityTracker: VelocityTracker? = null
   private var targetFPS: Int = 60
   private var lastEventTime: Long = 0
@@ -15,8 +15,8 @@ class MotionEventModule : Module() {
   private var originalWindowCallback: android.view.Window.Callback? = null
 
   override fun definition() = ModuleDefinition {
-    Name("MotionEvent")
-    Events("onMotionEvent")
+    Name("ExpoMotionEvent")
+    Events("onExpoMotionEvent")
 
     Function("startListening") {
       try {
@@ -25,11 +25,11 @@ class MotionEventModule : Module() {
           velocityTracker?.recycle()
           velocityTracker = VelocityTracker.obtain()
           setupTouchEventInterceptor()
-          Log.d("MotionEventModule", "Started listening")
+          Log.d("ExpoMotionEventModule", "Started listening")
         }
         true
       } catch (e: Exception) {
-        Log.e("MotionEventModule", "Error starting listener", e)
+        Log.e("ExpoMotionEventModule", "Error starting listener", e)
         false
       }
     }
@@ -40,10 +40,10 @@ class MotionEventModule : Module() {
         velocityTracker?.recycle()
         velocityTracker = null
         restoreOriginalWindowCallback()
-        Log.d("MotionEventModule", "Stopped listening")
+        Log.d("ExpoMotionEventModule", "Stopped listening")
         true
       } catch (e: Exception) {
-        Log.e("MotionEventModule", "Error stopping listener", e)
+        Log.e("ExpoMotionEventModule", "Error stopping listener", e)
         false
       }
     }
@@ -51,10 +51,10 @@ class MotionEventModule : Module() {
     Function("setTargetFPS") { fps: Int ->
       try {
         targetFPS = fps.coerceIn(1, 120)
-        Log.d("MotionEventModule", "Set FPS to $targetFPS")
+        Log.d("ExpoMotionEventModule", "Set FPS to $targetFPS")
         true
       } catch (e: Exception) {
-        Log.e("MotionEventModule", "Error setting FPS", e)
+        Log.e("ExpoMotionEventModule", "Error setting FPS", e)
         false
       }
     }
@@ -84,7 +84,7 @@ class MotionEventModule : Module() {
         }
       }
     } catch (e: Exception) {
-      Log.e("MotionEventModule", "Error setting up touch interceptor", e)
+      Log.e("ExpoMotionEventModule", "Error setting up touch interceptor", e)
     }
   }
 
@@ -97,7 +97,7 @@ class MotionEventModule : Module() {
         }
       }
     } catch (e: Exception) {
-      Log.e("MotionEventModule", "Error restoring original window callback", e)
+      Log.e("ExpoMotionEventModule", "Error restoring original window callback", e)
     }
   }
 
@@ -115,10 +115,10 @@ class MotionEventModule : Module() {
         velocityTracker?.computeCurrentVelocity(1000)
 
         val eventData = createEventData(event)
-        sendEvent("onMotionEvent", eventData)
-        Log.d("MotionEventModule", "Event sent: action=${event.action}, x=${event.x}, y=${event.y}")
+        sendEvent("onExpoMotionEvent", eventData)
+        Log.d("ExpoMotionEventModule", "Event sent: action=${event.action}, x=${event.x}, y=${event.y}")
       } catch (e: Exception) {
-        Log.e("MotionEventModule", "Error processing motion event", e)
+        Log.e("ExpoMotionEventModule", "Error processing motion event", e)
       }
     }
   }
@@ -179,7 +179,7 @@ class MotionEventModule : Module() {
         "fps" to targetFPS
       )
     } catch (e: Exception) {
-      Log.e("MotionEventModule", "Error creating event data", e)
+      Log.e("ExpoMotionEventModule", "Error creating event data", e)
       mapOf(
         "error" to "Failed to create event data: ${e.message}",
         "action" to event.action,
