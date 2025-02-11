@@ -40,6 +40,8 @@
   "license": "MIT",
   "homepage": "https://github.com/lasjdhu/expo-motion-event#readme",
   "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@types/react": "~18.3.12",
     "expo": "~52.0.0",
     "expo-module-scripts": "^4.0.3",

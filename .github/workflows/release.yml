@@ -1,0 +1,84 @@
+name: Release Management
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prettier check
+        run: npm run style:check
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript check
+        run: npm run ts:check
+
+      - name: Install dependencies
+        run: |
+          npm install -g conventional-changelog-cli
+          npm install -g conventional-recommended-bump
+          npm install
+
+      - name: Get version bump type
+        id: bump
+        run: |
+          BUMP=$(conventional-recommended-bump -p angular)
+          echo "bump=$BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+          if [ "${{ steps.bump.outputs.bump }}" = "major" ]; then
+            npm version major -no-git-tag-version
+          elif [ "${{ steps.bump.outputs.bump }}" = "minor" ]; then
+            npm version minor -no-git-tag-version
+          else
+            npm version patch -no-git-tag-version
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+
+          npm install --package-lock-only
+
+          if [ -f "android/build.gradle" ]; then
+            sed -i "s/version = '.*'/version = '$NEW_VERSION'/" android/build.gradle
+            sed -i "s/versionName \".*\"/versionName \"$NEW_VERSION\"/" android/build.gradle
+
+            MAJOR=$(echo $NEW_VERSION | cut -d. -f1)
+            MINOR=$(echo $NEW_VERSION | cut -d. -f2)
+            PATCH=$(echo $NEW_VERSION | cut -d. -f3)
+
+            VERSION_CODE=$((10000 * MAJOR + 100 * MINOR + PATCH))
+            sed -i "s/versionCode .*/versionCode $VERSION_CODE/" android/build.gradle
+          fi
+
+      - name: Generate changelog
+        run: |
+          conventional-changelog -p angular -i CHANGELOG.md -s
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add CHANGELOG.md package.json package-lock.json android/build.gradle
+          git commit -m "chore(release): bump version [skip ci]"
+          git push
