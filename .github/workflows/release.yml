@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,11 +76,16 @@ jobs:
       - name: Generate changelog
         run: |
           conventional-changelog -p angular -i CHANGELOG.md -s
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add CHANGELOG.md package.json package-lock.json android/build.gradle
-          git commit -m "chore(release): bump version [skip ci]"
-          git push
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(release): bump version [skip ci]"
+          branch: version-bump
+          delete-branch: true
+          title: "chore(release): version bump and changelog update"
+          body: |
+            Automated version bump and changelog update
+ 
+            - Updated version in package.json, package-lock.json, and android/build.gradle
+            - Generated/Updated CHANGELOG.md
