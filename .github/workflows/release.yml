@@ -7,6 +7,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,12 +32,11 @@ jobs:
 
       - name: Run TypeScript check
         run: npm run ts:check
-
-      - name: Install dependencies
+      - name: Install changelog tools
         run: |
           npm install -g conventional-changelog-cli
           npm install -g conventional-recommended-bump
-          npm install
+          npm install -g conventional-changelog-angular
 
       - name: Get version bump type
         id: bump
