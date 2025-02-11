@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 group = 'expo.modules.motionevent'
-version = '0.1.0'
+version = '0.2.0'
 
 def expoModulesCorePlugin = new File(project(":expo-modules-core").projectDir.absolutePath, "ExpoModulesCorePlugin.gradle")
 apply from: expoModulesCorePlugin
@@ -34,8 +34,8 @@ if (useManagedAndroidSdkVersions) {
 android {
   namespace "expo.modules.motionevent"
   defaultConfig {
-    versionCode 1
-    versionName "0.1.0"
+    versionCode 200
+    versionName "0.2.0"
   }
   lintOptions {
     abortOnError false

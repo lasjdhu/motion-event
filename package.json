@@ -1,6 +1,6 @@
 {
   "name": "expo-motion-event",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Module that provides seamless access to Android's native MotionEvent API, allowing developers to capture and interact with low-level touch and motion events",
   "main": "build/index.js",
   "types": "build/index.d.ts",
