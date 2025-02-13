@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'expo.modules.motionevent.example'
+    namespace 'com.lasjdhu.motionevent.example'
     defaultConfig {
-        applicationId 'expo.modules.motionevent.example'
+        applicationId 'com.lasjdhu.motionevent.example'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

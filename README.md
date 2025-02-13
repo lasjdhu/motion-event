@@ -1,6 +1,6 @@
-# expo-motion-event [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+# motion-event [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-`expo-motion-event` is a lightweight and efficient React Native module for handling raw motion events on Android. It provides high-performance tracking of touch gestures, including velocity, pressure, and precision data.
+`motion-event` is a lightweight and efficient React Native module for handling raw motion events on Android. It provides high-performance tracking of touch gestures, including velocity, pressure, and precision data.
 
 ## 🚀 Features
 
@@ -30,12 +30,12 @@
 
 ```tsx
 import {
-  ExpoMotionEvent,
+  MotionEvent,
   startListening,
   stopListening,
   setTargetFPS,
-  addExpoMotionEventListener,
-} from "expo-motion-event";
+  addMotionEventListener,
+} from "motion-event";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -48,15 +48,15 @@ import {
 } from "react-native";
 
 export default function App() {
-  const [event, setEvent] = useState<ExpoMotionEvent | null>(null);
+  const [event, setEvent] = useState<MotionEvent | null>(null);
   const [fps, setFps] = useState("60");
 
   useEffect(() => {
     startListening();
     setTargetFPS(Number(fps));
 
-    const subscription = addExpoMotionEventListener((expoMotionEvent) => {
-      setEvent(expoMotionEvent);
+    const subscription = addMotionEventListener((motionEvent) => {
+      setEvent(motionEvent);
     });
 
     return () => {
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
 | [react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler) | Gesture-based interactions  |
 | [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated)           | Advanced gesture animations |
 
-Unlike gesture-based libraries, `expo-motion-event` is designed for low-level event handling, making it ideal for use cases requiring precise touch tracking, such as custom multi-touch interactions and real-time input processing.
+Unlike gesture-based libraries, `motion-event` is designed for low-level event handling, making it ideal for use cases requiring precise touch tracking, such as custom multi-touch interactions and real-time input processing.

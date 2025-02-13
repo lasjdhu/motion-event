@@ -1,21 +1,21 @@
 import { EventSubscription } from "expo-modules-core";
 
 import {
-  ExpoMotionEvent,
-  ExpoMotionEventListener,
-  ExpoMotionEventName,
-  ExpoMotionEventCoords,
-  ExpoMotionEventProperties,
+  MotionEvent,
+  MotionEventListener,
+  MotionEventName,
+  MotionEventCoords,
+  MotionEventProperties,
   MotionEventActions,
   ToolTypes,
-  ExpoMotionEventError,
-  ExpoMotionEventResult,
-} from "./ExpoMotionEvent.types";
-import ExpoMotionEventModule from "./ExpoMotionEventModule";
+  MotionEventError,
+  MotionEventResult,
+} from "./MotionEvent.types";
+import MotionEventModule from "./MotionEventModule";
 
 export function startListening(): void {
   try {
-    ExpoMotionEventModule.startListening();
+    MotionEventModule.startListening();
   } catch (error) {
     console.error("Failed to start listening:", error);
   }
@@ -23,30 +23,30 @@ export function startListening(): void {
 
 export function stopListening(): void {
   try {
-    ExpoMotionEventModule.stopListening();
+    MotionEventModule.stopListening();
   } catch (error) {
     console.error("Failed to stop listening:", error);
   }
 }
 
 export function setTargetFPS(fps: number): void {
-  ExpoMotionEventModule.setTargetFPS(fps);
+  MotionEventModule.setTargetFPS(fps);
 }
 
-export function addExpoMotionEventListener(
-  listener: ExpoMotionEventListener,
+export function addMotionEventListener(
+  listener: MotionEventListener,
 ): EventSubscription {
-  return ExpoMotionEventModule.addListener("onExpoMotionEvent", listener);
+  return MotionEventModule.addListener("onMotionEvent", listener);
 }
 
 export { MotionEventActions, ToolTypes };
 export type {
-  ExpoMotionEvent,
-  ExpoMotionEventCoords,
-  ExpoMotionEventProperties,
-  ExpoMotionEventListener,
-  ExpoMotionEventName,
-  ExpoMotionEventError,
-  ExpoMotionEventResult,
+  MotionEvent,
+  MotionEventCoords,
+  MotionEventProperties,
+  MotionEventListener,
+  MotionEventName,
+  MotionEventError,
+  MotionEventResult,
   EventSubscription,
 };

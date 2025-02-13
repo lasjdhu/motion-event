@@ -1,4 +1,4 @@
-package expo.modules.motionevent
+package com.lasjdhu.motionevent
 
 import android.os.SystemClock
 import android.util.Log
@@ -7,7 +7,7 @@ import android.view.VelocityTracker
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-class ExpoMotionEventModule : Module() {
+class MotionEventModule : Module() {
   private var velocityTracker: VelocityTracker? = null
   private var targetFPS: Int = 60
   private var lastEventTime: Long = 0
@@ -18,8 +18,8 @@ class ExpoMotionEventModule : Module() {
   private val tempPointerProps = MotionEvent.PointerProperties()
 
   override fun definition() = ModuleDefinition {
-    Name("ExpoMotionEvent")
-    Events("onExpoMotionEvent")
+    Name("MotionEvent")
+    Events("onMotionEvent")
 
     Function("startListening") {
       if (!isListening) {
@@ -86,7 +86,7 @@ class ExpoMotionEventModule : Module() {
       }
 
       val eventData = createEventData(event)
-      sendEvent("onExpoMotionEvent", eventData)
+      sendEvent("onMotionEvent", eventData)
     }
   }
 
@@ -143,7 +143,7 @@ class ExpoMotionEventModule : Module() {
         "fps" to targetFPS
       )
     } catch (e: Exception) {
-      Log.e("ExpoMotionEventModule", "Error creating event data", e)
+      Log.e("MotionEventModule", "Error creating event data", e)
       mapOf(
         "error" to "Failed to create event data: ${e.message}",
         "action" to event.action,
