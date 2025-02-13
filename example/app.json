@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-motion-event-example",
-    "slug": "expo-motion-event-example",
+    "name": "motion-event-example",
+    "slug": "motion-event-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.motionevent.example"
+      "bundleIdentifier": "com.lasjdhu.motionevent.example"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "expo.modules.motionevent.example"
+      "package": "com.lasjdhu.motionevent.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"

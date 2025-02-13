@@ -1,4 +1,4 @@
-package expo.modules.motionevent.example
+package com.lasjdhu.motionevent.example
 
 import android.os.Build
 import android.os.Bundle

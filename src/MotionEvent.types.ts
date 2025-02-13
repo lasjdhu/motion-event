@@ -16,7 +16,7 @@ export const ToolTypes = {
   ERASER: 4,
 } as const;
 
-export interface ExpoMotionEventCoords {
+export interface MotionEventCoords {
   orientation: number;
   pressure: number;
   size: number;
@@ -28,12 +28,12 @@ export interface ExpoMotionEventCoords {
   y: number;
 }
 
-export interface ExpoMotionEventProperties {
+export interface MotionEventProperties {
   id: number;
   toolType: number;
 }
 
-export interface ExpoMotionEvent {
+export interface MotionEvent {
   action: number;
   actionMasked: number;
   actionIndex: number;
@@ -43,8 +43,8 @@ export interface ExpoMotionEvent {
   deviceId: number;
   source: number;
   pointerCount: number;
-  pointerCoords: ExpoMotionEventCoords[];
-  pointerProperties: ExpoMotionEventProperties[];
+  pointerCoords: MotionEventCoords[];
+  pointerProperties: MotionEventProperties[];
   rawX: number;
   rawY: number;
   xPrecision: number;
@@ -54,25 +54,25 @@ export interface ExpoMotionEvent {
   fps: number;
 }
 
-export interface ExpoMotionEventError {
+export interface MotionEventError {
   code: string;
   message: string;
   details?: any;
 }
 
-export type ExpoMotionEventResult =
-  | { type: "success"; data: ExpoMotionEvent }
-  | { type: "error"; error: ExpoMotionEventError };
+export type MotionEventResult =
+  | { type: "success"; data: MotionEvent }
+  | { type: "error"; error: MotionEventError };
 
-export type ExpoMotionEventName = "onExpoMotionEvent";
-export type ExpoMotionEventListener = (event: ExpoMotionEvent) => void;
+export type MotionEventName = "onMotionEvent";
+export type MotionEventListener = (event: MotionEvent) => void;
 
-export interface ExpoMotionEventModule {
+export interface MotionEventModule {
   startListening(): void;
   stopListening(): void;
   setTargetFPS(fps: number): void;
   addListener(
-    eventName: ExpoMotionEventName,
-    listener: ExpoMotionEventListener,
+    eventName: MotionEventName,
+    listener: MotionEventListener,
   ): EventSubscription;
 }

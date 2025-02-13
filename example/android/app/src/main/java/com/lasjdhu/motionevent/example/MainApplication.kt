@@ -1,4 +1,4 @@
-package expo.modules.motionevent.example
+package com.lasjdhu.motionevent.example
 
 import android.app.Application
 import android.content.res.Configuration

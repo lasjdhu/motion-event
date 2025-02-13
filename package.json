@@ -1,5 +1,5 @@
 {
-  "name": "expo-motion-event",
+  "name": "motion-event",
   "version": "0.1.0",
   "description": "Module that provides seamless access to Android's native MotionEvent API, allowing developers to capture and interact with low-level touch and motion events",
   "main": "build/index.js",
@@ -23,8 +23,7 @@
   "keywords": [
     "react-native",
     "expo",
-    "expo-motion-event",
-    "ExpoMotionEvent",
+    "motion-event",
     "MotionEvent"
   ],
   "files": [
@@ -32,13 +31,13 @@
     "android",
     "example"
   ],
-  "repository": "https://github.com/lasjdhu/expo-motion-event",
+  "repository": "https://github.com/lasjdhu/motion-event",
   "bugs": {
-    "url": "https://github.com/lasjdhu/expo-motion-event/issues"
+    "url": "https://github.com/lasjdhu/motion-event/issues"
   },
   "author": "Dmitrii Ivanushkin <dmitrii.unwritten183@passmail.net> (https://github.com/lasjdhu)",
   "license": "MIT",
-  "homepage": "https://github.com/lasjdhu/expo-motion-event#readme",
+  "homepage": "https://github.com/lasjdhu/motion-event#readme",
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",

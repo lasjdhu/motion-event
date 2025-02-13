@@ -1,5 +1,5 @@
 {
-  "name": "expo-motion-event-example",
+  "name": "motion-event-example",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
