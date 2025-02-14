@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       draft_only:
-        description: 'Only create draft release (skip version bump)'
+        description: "Only create draft release (skip version bump)"
         type: boolean
         default: false
   push:
