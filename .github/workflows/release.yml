@@ -1,14 +1,11 @@
 name: Release Management
 
 on:
-  workflow_dispatch:
-    inputs:
-      draft_only:
-        description: "Only create draft release (skip version bump)"
-        type: boolean
-        default: false
   push:
     branches: ["main"]
+
+permissions:
+  contents: write
 
 jobs:
   validate:
@@ -40,9 +37,6 @@ jobs:
     needs: validate
     if: "!contains(github.event.head_commit.message, 'chore(release): bump version')"
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -68,11 +62,9 @@ jobs:
 
       - name: Get version bump type
         id: bump
-        if: "!inputs.draft_only"
         run: echo "bump=$(conventional-recommended-bump -p angular)" >> $GITHUB_OUTPUT
 
       - name: Bump version
-        if: "!inputs.draft_only"
         run: |
           npm version ${{ steps.bump.outputs.bump }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
@@ -90,15 +82,14 @@ jobs:
         run: |
           conventional-changelog -p angular -i CHANGELOG.md -s
 
-      - name: Commit changes
-        if: "!inputs.draft_only"
+      - name: Configure git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json CHANGELOG.md
-          if [ -f "android/build.gradle" ]; then
-            git add android/build.gradle
-          fi
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+      - name: Commit changes
+        run: |
+          git add package.json package-lock.json CHANGELOG.md android/build.gradle
           git commit -m "chore(release): bump version ${{ env.NEW_VERSION }}"
           git push
 
@@ -106,10 +97,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ env.NEW_VERSION }}
-        run: |
-          if [ "${{ inputs.draft_only }}" = "true" ]; then
-            CURRENT_VERSION=$(node -p "require('./package.json').version")
-            gh release create v$CURRENT_VERSION --draft --generate-notes
-          else
-            gh release create v$VERSION --draft --generate-notes
-          fi
+        run: gh release create $VERSION --draft --generate-notes
