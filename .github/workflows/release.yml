@@ -1,11 +1,43 @@
 name: Release Management
 
 on:
+  workflow_dispatch:
+    inputs:
+      draft_only:
+        description: 'Only create draft release (skip version bump)'
+        type: boolean
+        default: false
   push:
     branches: ["main"]
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prettier check
+        run: npm run style:check
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript check
+        run: npm run ts:check
+
   release:
+    needs: validate
     if: "!contains(github.event.head_commit.message, 'chore(release): bump version')"
     runs-on: ubuntu-latest
     permissions:
@@ -26,15 +58,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Prettier check
-        run: npm run style:check
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Run TypeScript check
-        run: npm run ts:check
-
       - name: Install changelog tools
         run: |
           npm install -g conventional-changelog-cli
@@ -43,13 +66,15 @@ jobs:
 
       - name: Get version bump type
         id: bump
+        if: "!inputs.draft_only"
         run: echo "bump=$(conventional-recommended-bump -p angular)" >> $GITHUB_OUTPUT
 
       - name: Bump version
+        if: "!inputs.draft_only"
         run: |
           npm version ${{ steps.bump.outputs.bump }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
-
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           npm install --package-lock-only
 
           if [ -f "android/build.gradle" ]; then
@@ -63,15 +88,26 @@ jobs:
         run: |
           conventional-changelog -p angular -i CHANGELOG.md -s
 
-      - name: Commit, tag, and push changes
+      - name: Commit changes
+        if: "!inputs.draft_only"
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          VERSION=$(node -p "require('./package.json').version")
           git add package.json package-lock.json CHANGELOG.md
-          git commit -m "chore(release): bump version $VERSION"
-          git tag v$VERSION
-          git push origin main --tags
+          if [ -f "android/build.gradle" ]; then
+            git add android/build.gradle
+          fi
+          git commit -m "chore(release): bump version ${{ env.NEW_VERSION }}"
+          git push
+
+      - name: Create Release Draft
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ env.NEW_VERSION }}
+        run: |
+          if [ "${{ inputs.draft_only }}" = "true" ]; then
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            gh release create v$CURRENT_VERSION --draft --generate-notes
+          else
+            gh release create v$VERSION --draft --generate-notes
+          fi
