@@ -1,6 +1,6 @@
 # motion-event [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-`motion-event` is a lightweight and efficient React Native module for handling raw motion events on Android. It provides high-performance tracking of touch gestures, including velocity, pressure, and precision data.
+Lightweight and efficient Expo module for handling raw motion events on Android
 
 ## 🚀 Features
 
@@ -10,50 +10,30 @@
 - **Multiple touch points support**
 - **Expo-compatible**, making integration seamless in managed and bare workflows
 
-## ⚙️ Installation
+## Contributing
 
-```sh
-#TODO
-```
+Your contributions to `motion-event` are welcomed! This package is currently in **testing phase** and is being prepared for publishing on NPM. Initially, this package was created to meet my own specific needs, but contributions from the community are highly encouraged. Feel free to create issues for feature requests, bug reports, or any improvements you have in mind.
+
+If you'd like to contribute code, please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 🎨 Preview
 
-<img alt="Example" src="readme-assets/example.gif" width="250"/>
-
-## 🔨 API
-
-```sh
-#TODO
-```
+<p align="center">
+  <img alt="Example" src="readme-assets/example.gif" width="250"/>
+</p>
 
 ## 💻 Basic Usage
 
-```tsx
-import {
-  MotionEvent,
-  startListening,
-  stopListening,
-  setTargetFPS,
-  addMotionEventListener,
-} from "motion-event";
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  SafeAreaView,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+You can see the working example in the `example` directory.
 
+```tsx
 export default function App() {
   const [event, setEvent] = useState<MotionEvent | null>(null);
-  const [fps, setFps] = useState("60");
+  const [fps, setFps] = useState(60);
 
   useEffect(() => {
     startListening();
-    setTargetFPS(Number(fps));
+    setTargetFPS(fps);
 
     const subscription = addMotionEventListener((motionEvent) => {
       setEvent(motionEvent);
@@ -66,52 +46,33 @@ export default function App() {
   }, [fps]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.controls}>
-        <Pressable onPress={() => startListening()} style={styles.button}>
-          <Text style={styles.buttonLabel}>Start</Text>
+    <SafeAreaView>
+      <View>
+        <Pressable onPress={() => startListening()}>
+          <Text>Start</Text>
         </Pressable>
-        <Pressable onPress={() => stopListening()} style={styles.button}>
-          <Text style={styles.buttonLabel}>Stop</Text>
+        <Pressable onPress={() => stopListening()}>
+          <Text>Stop</Text>
         </Pressable>
-        <TextInput
-          style={styles.input}
-          value={fps}
-          onChangeText={setFps}
-          keyboardType="numeric"
-          maxLength={3}
-        />
+        <TextInput value={fps} onChangeText={(e) => setFps(Number(e))} />
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        {event ? (
-          <View>
-            <Text>FPS: {event.fps}</Text>
-            <Text>
-              Velocity: ({event.velocityX.toFixed(2)},{" "}
-              {event.velocityY.toFixed(2)})
-            </Text>
-          </View>
-        ) : (
-          <Text>Waiting for motion events...</Text>
-        )}
-      </ScrollView>
+      <Text>{JSON.stringify(event, null, 2)}</Text>
     </SafeAreaView>
   );
 }
+```
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#f0f2f5" },
-  controls: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  button: { padding: 10, backgroundColor: "#348352", borderRadius: 4 },
-  buttonLabel: { color: "white" },
-  input: { borderWidth: 1, padding: 8, width: 60, textAlign: "center" },
-  scrollView: { flex: 1 },
-});
+## ⚙️ Installation
+
+```sh
+#TODO
+```
+
+## 🔨 API
+
+```sh
+#TODO
 ```
 
 ## 🤔 Alternatives
