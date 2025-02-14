@@ -34,6 +34,7 @@ jobs:
 
       - name: Run TypeScript check
         run: npm run ts:check
+
       - name: Install changelog tools
         run: |
           npm install -g conventional-changelog-cli
@@ -42,22 +43,11 @@ jobs:
 
       - name: Get version bump type
         id: bump
-        run: |
-          BUMP=$(conventional-recommended-bump -p angular)
-          echo "bump=$BUMP" >> $GITHUB_OUTPUT
+        run: echo "bump=$(conventional-recommended-bump -p angular)" >> $GITHUB_OUTPUT
 
       - name: Bump version
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-
-          if [ "${{ steps.bump.outputs.bump }}" = "major" ]; then
-            npm version major -no-git-tag-version
-          elif [ "${{ steps.bump.outputs.bump }}" = "minor" ]; then
-            npm version minor -no-git-tag-version
-          else
-            npm version patch -no-git-tag-version
-          fi
-
+          npm version ${{ steps.bump.outputs.bump }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
 
           npm install --package-lock-only
@@ -65,26 +55,23 @@ jobs:
           if [ -f "android/build.gradle" ]; then
             sed -i "s/version = '.*'/version = '$NEW_VERSION'/" android/build.gradle
             sed -i "s/versionName \".*\"/versionName \"$NEW_VERSION\"/" android/build.gradle
-
-            MAJOR=$(echo $NEW_VERSION | cut -d. -f1)
-            MINOR=$(echo $NEW_VERSION | cut -d. -f2)
-            PATCH=$(echo $NEW_VERSION | cut -d. -f3)
-
-            VERSION_CODE=$((10000 * MAJOR + 100 * MINOR + PATCH))
+            VERSION_CODE=$((10000 * $(echo $NEW_VERSION | cut -d. -f1) + 100 * $(echo $NEW_VERSION | cut -d. -f2) + $(echo $NEW_VERSION | cut -d. -f3)))
             sed -i "s/versionCode .*/versionCode $VERSION_CODE/" android/build.gradle
           fi
 
       - name: Generate changelog
         run: |
           conventional-changelog -p angular -i CHANGELOG.md -s
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: "chore(release): bump version"
-          branch: version-bump
-          base: main
-          delete-branch: true
-          title: "Version bump and Changelog update"
-          body: |
-            - Updated version in package.json, package-lock.json, and android/build.gradle
-            - Generated/Updated CHANGELOG.md
+
+      - name: Commit, tag, and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          VERSION=$(node -p "require('./package.json').version")
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore(release): bump version $VERSION"
+          git tag v$VERSION
+          git push origin main --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
