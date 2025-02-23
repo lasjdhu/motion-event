@@ -9,6 +9,7 @@ Lightweight and efficient Expo module for handling raw motion events on Android
 - **Customizable FPS target** to balance responsiveness and performance
 - **Multiple touch points support**
 - **Expo-compatible**, making integration seamless in managed and bare workflows
+- Start and stop listening with built-in functions
 
 ## Contributing
 
@@ -63,18 +64,6 @@ export default function App() {
 }
 ```
 
-## ⚙️ Installation
-
-```sh
-#TODO
-```
-
-## 🔨 API
-
-```sh
-#TODO
-```
-
 ## 🤔 Alternatives
 
 | Library                                                                                          | Focus                       |
@@ -83,3 +72,147 @@ export default function App() {
 | [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated)           | Advanced gesture animations |
 
 Unlike gesture-based libraries, `motion-event` is designed for low-level event handling, making it ideal for use cases requiring precise touch tracking, such as custom multi-touch interactions and real-time input processing.
+
+## API Reference
+
+### Functions
+
+#### `startListening()`
+
+Starts listening for motion events.
+
+```typescript
+function startListening(): void;
+```
+
+#### `stopListening()`
+
+Stops listening for motion events.
+
+```typescript
+function stopListening(): void;
+```
+
+#### `setTargetFPS(fps: number)`
+
+Sets the target frames per second for motion event updates.
+
+```typescript
+function setTargetFPS(fps: number): void;
+```
+
+#### `addMotionEventListener(listener: MotionEventListener)`
+
+Adds a listener for motion events. Returns an EventSubscription that can be used to remove the listener.
+
+```typescript
+function addMotionEventListener(
+  listener: MotionEventListener,
+): EventSubscription;
+```
+
+### Constants
+
+#### MotionEventActions
+
+```typescript
+const MotionEventActions = {
+  DOWN: 0, // Touch down event
+  UP: 1, // Touch up event
+  MOVE: 2, // Touch move event
+  CANCEL: 3, // Touch cancel event
+  POINTER_DOWN: 5, // Additional pointer down
+  POINTER_UP: 6, // Additional pointer up
+} as const;
+```
+
+#### ToolTypes
+
+```typescript
+const ToolTypes = {
+  FINGER: 1, // Touch input from finger
+  STYLUS: 2, // Input from stylus
+  MOUSE: 3, // Input from mouse
+  ERASER: 4, // Input from stylus eraser
+} as const;
+```
+
+### Types
+
+#### MotionEvent
+
+The main event object containing all motion event data.
+
+```typescript
+interface MotionEvent {
+  action: number; // The action type (see MotionEventActions)
+  actionMasked: number; // The masked action type
+  actionIndex: number; // Index of the pointer that triggered the event
+  eventTime: number; // Time the event occurred
+  downTime: number; // Time of the initial down event
+  edgeFlags: number; // Flags indicating which edges were touched
+  deviceId: number; // ID of the input device
+  source: number; // Source of the event
+  pointerCount: number; // Number of pointers in the event
+  pointerCoords: MotionEventCoords[]; // Array of pointer coordinates
+  pointerProperties: MotionEventProperties[]; // Array of pointer properties
+  rawX: number; // Raw X coordinate
+  rawY: number; // Raw Y coordinate
+  xPrecision: number; // X axis precision
+  yPrecision: number; // Y axis precision
+  velocityX: number; // X axis velocity
+  velocityY: number; // Y axis velocity
+  fps: number; // Current FPS
+}
+```
+
+#### MotionEventCoords
+
+Detailed coordinates and properties for each pointer.
+
+```typescript
+interface MotionEventCoords {
+  orientation: number; // Orientation of the tool
+  pressure: number; // Pressure of the touch
+  size: number; // Size of the touch area
+  toolMajor: number; // Major axis of the tool
+  toolMinor: number; // Minor axis of the tool
+  touchMajor: number; // Major axis of the touch area
+  touchMinor: number; // Minor axis of the touch area
+  x: number; // X coordinate
+  y: number; // Y coordinate
+}
+```
+
+#### MotionEventProperties
+
+Properties for each pointer.
+
+```typescript
+interface MotionEventProperties {
+  id: number; // Unique identifier for the pointer
+  toolType: number; // Type of tool (see ToolTypes)
+}
+```
+
+#### MotionEventError
+
+Error object structure.
+
+```typescript
+interface MotionEventError {
+  code: string;
+  message: string;
+  details?: any;
+}
+```
+
+#### MotionEventResult
+
+Union type for successful and error results.
+
+```typescript
+type MotionEventResult =
+  | { type: "success"; data: MotionEvent }
+  | { type: "error"; error: MotionEventError };
+```

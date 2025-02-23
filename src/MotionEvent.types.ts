@@ -1,57 +1,57 @@
 import { EventSubscription } from "expo-modules-core";
 
 export const MotionEventActions = {
-  DOWN: 0,
-  UP: 1,
-  MOVE: 2,
-  CANCEL: 3,
-  POINTER_DOWN: 5,
-  POINTER_UP: 6,
+  DOWN: 0, // Touch down event
+  UP: 1, // Touch up event
+  MOVE: 2, // Touch move event
+  CANCEL: 3, // Touch cancel event
+  POINTER_DOWN: 5, // Additional pointer down
+  POINTER_UP: 6, // Additional pointer up
 } as const;
 
 export const ToolTypes = {
-  FINGER: 1,
-  STYLUS: 2,
-  MOUSE: 3,
-  ERASER: 4,
+  FINGER: 1, // Touch input from finger
+  STYLUS: 2, // Input from stylus
+  MOUSE: 3, // Input from mouse
+  ERASER: 4, // Input from stylus eraser
 } as const;
 
 export interface MotionEventCoords {
-  orientation: number;
-  pressure: number;
-  size: number;
-  toolMajor: number;
-  toolMinor: number;
-  touchMajor: number;
-  touchMinor: number;
-  x: number;
-  y: number;
+  orientation: number; // Orientation of the tool
+  pressure: number; // Pressure of the touch
+  size: number; // Size of the touch area
+  toolMajor: number; // Major axis of the tool
+  toolMinor: number; // Minor axis of the tool
+  touchMajor: number; // Major axis of the touch area
+  touchMinor: number; // Minor axis of the touch area
+  x: number; // X coordinate
+  y: number; // Y coordinate
 }
 
 export interface MotionEventProperties {
-  id: number;
-  toolType: number;
+  id: number; // Unique identifier for the pointer
+  toolType: number; // Type of tool (see ToolTypes)
 }
 
 export interface MotionEvent {
-  action: number;
-  actionMasked: number;
-  actionIndex: number;
-  eventTime: number;
-  downTime: number;
-  edgeFlags: number;
-  deviceId: number;
-  source: number;
-  pointerCount: number;
-  pointerCoords: MotionEventCoords[];
-  pointerProperties: MotionEventProperties[];
-  rawX: number;
-  rawY: number;
-  xPrecision: number;
-  yPrecision: number;
-  velocityX: number;
-  velocityY: number;
-  fps: number;
+  action: number; // The action type (see MotionEventActions)
+  actionMasked: number; // The masked action type
+  actionIndex: number; // Index of the pointer that triggered the event
+  eventTime: number; // Time the event occurred
+  downTime: number; // Time of the initial down event
+  edgeFlags: number; // Flags indicating which edges were touched
+  deviceId: number; // ID of the input device
+  source: number; // Source of the event
+  pointerCount: number; // Number of pointers in the event
+  pointerCoords: MotionEventCoords[]; // Array of pointer coordinates
+  pointerProperties: MotionEventProperties[]; // Array of pointer properties
+  rawX: number; // Raw X coordinate
+  rawY: number; // Raw Y coordinate
+  xPrecision: number; // X axis precision
+  yPrecision: number; // Y axis precision
+  velocityX: number; // X axis velocity
+  velocityY: number; // Y axis velocity
+  fps: number; // Current FPS
 }
 
 export interface MotionEventError {
