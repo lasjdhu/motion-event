@@ -1,5 +1,7 @@
 # motion-event [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
+`v0.1.0`
+
 Lightweight and efficient Expo module for handling raw motion events on Android
 
 ## 🚀 Features
@@ -11,11 +13,11 @@ Lightweight and efficient Expo module for handling raw motion events on Android
 - **Expo-compatible**, making integration seamless in managed and bare workflows
 - Start and stop listening with built-in functions
 
-## Contributing
+## Installation
 
-Your contributions to `motion-event` are welcomed! This package is currently in **testing phase** and is being prepared for publishing on NPM. Initially, this package was created to meet my own specific needs, but contributions from the community are highly encouraged. Feel free to create issues for feature requests, bug reports, or any improvements you have in mind.
-
-If you'd like to contribute code, please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+```sh
+npm i motion-event
+```
 
 ## 🎨 Preview
 
@@ -216,3 +218,9 @@ type MotionEventResult =
   | { type: "success"; data: MotionEvent }
   | { type: "error"; error: MotionEventError };
 ```
+
+## Contributing
+
+Your contributions to `motion-event` are welcomed! This package is currently in **testing phase** and is being prepared for publishing on NPM. Initially, this package was created to meet my own specific needs, but contributions from the community are highly encouraged. Feel free to create issues for feature requests, bug reports, or any improvements you have in mind.
+
+If you'd like to contribute code, please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
