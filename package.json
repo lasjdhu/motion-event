@@ -1,7 +1,7 @@
 {
   "name": "motion-event",
   "version": "0.1.0",
-  "description": "Module that provides seamless access to Android's native MotionEvent API, allowing developers to capture and interact with low-level touch and motion events",
+  "description": "Lightweight and efficient Expo module for handling raw motion events on Android",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
@@ -24,12 +24,17 @@
     "react-native",
     "expo",
     "motion-event",
-    "MotionEvent"
+    "MotionEvent",
+    "touch",
+    "pointer",
+    "events"
   ],
   "files": [
-    "build",
-    "android",
-    "example"
+    "android/src/main/**/*",
+    "android/build.gradle",
+    "build/**/*",
+    "LICENSE",
+    "README.md"
   ],
   "repository": "https://github.com/lasjdhu/motion-event",
   "bugs": {
