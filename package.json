@@ -1,6 +1,6 @@
 {
   "name": "motion-event",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lightweight and efficient Expo module for handling raw motion events on Android",
   "main": "build/index.js",
   "types": "build/index.d.ts",
