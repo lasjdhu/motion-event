@@ -1,0 +1,59 @@
+{
+  "name": "motion-event",
+  "version": "0.1.0",
+  "description": "Lightweight and efficient Expo module for handling raw motion events on Android",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "style": "prettier --write .",
+    "style:check": "prettier --check .",
+    "ts:check": "tsc --noEmit",
+    "android:example": "cd example && npx expo run:android"
+  },
+  "platforms": [
+    "android"
+  ],
+  "keywords": [
+    "react-native",
+    "expo",
+    "motion-event",
+    "MotionEvent",
+    "touch",
+    "pointer",
+    "events"
+  ],
+  "files": [
+    "android/src/main/**/*",
+    "android/build.gradle",
+    "build/**/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": "https://github.com/lasjdhu/motion-event",
+  "bugs": {
+    "url": "https://github.com/lasjdhu/motion-event/issues"
+  },
+  "author": "Dmitrii Ivanushkin <dmitrii.unwritten183@passmail.net> (https://github.com/lasjdhu)",
+  "license": "MIT",
+  "homepage": "https://github.com/lasjdhu/motion-event#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@types/react": "~18.3.12",
+    "expo": "~52.0.0",
+    "expo-module-scripts": "^4.0.3",
+    "prettier": "^3.5.0",
+    "react-native": "0.76.0"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react-native": "*"
+  }
+}
