@@ -19,6 +19,9 @@ importers:
       expo:
         specifier: ^57.0.11
         version: 57.0.11(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(react-native@0.86.2(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      expo-modules-core:
+        specifier: ~57.0.10
+        version: 57.0.10(react-native@0.86.2(@babel/core@7.29.7)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
