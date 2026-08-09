@@ -4,6 +4,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.VelocityTracker
+import android.view.Window
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -12,7 +13,9 @@ class MotionEventModule : Module() {
   private var targetFPS: Int = 60
   private var lastEventTime: Long = 0
   private var isListening: Boolean = false
-  private var originalWindowCallback: android.view.Window.Callback? = null
+  private var interceptedWindow: Window? = null
+  private var originalWindowCallback: Window.Callback? = null
+  private var interceptorCallback: Window.Callback? = null
 
   private val tempPointerCoords = MotionEvent.PointerCoords()
   private val tempPointerProps = MotionEvent.PointerProperties()
@@ -21,13 +24,14 @@ class MotionEventModule : Module() {
     Name("MotionEvent")
     Events("onMotionEvent")
 
-    Function("startListening") {
+    Function("startListening") { targetFps: Int ->
+      targetFPS = targetFps.coerceIn(1, 120)
       if (!isListening) {
-        isListening = true
         velocityTracker?.clear() ?: run { velocityTracker = VelocityTracker.obtain() }
-        setupTouchEventInterceptor()
+        lastEventTime = 0
+        isListening = setupTouchEventInterceptor()
       }
-      true
+      isListening
     }
 
     Function("stopListening") {
@@ -37,54 +41,61 @@ class MotionEventModule : Module() {
       true
     }
 
-    Function("setTargetFPS") { fps: Int ->
-      targetFPS = fps.coerceIn(1, 120)
-      true
-    }
-
     OnDestroy {
       restoreOriginalWindowCallback()
       velocityTracker?.clear()
+      velocityTracker?.recycle()
+      velocityTracker = null
       isListening = false
     }
   }
 
-  private fun setupTouchEventInterceptor() {
-    val activity = appContext.activityProvider?.currentActivity ?: return
+  private fun setupTouchEventInterceptor(): Boolean {
+    val activity = appContext.activityProvider?.currentActivity ?: return false
     val window = activity.window
-    originalWindowCallback = window.callback
-    originalWindowCallback?.let { callback ->
-      window.callback = object : android.view.Window.Callback by callback {
-        override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-          if (isListening) {
-            handleTouchEvent(event)
-          }
-          return callback.dispatchTouchEvent(event)
+    val callback = window.callback
+    val interceptor = object : Window.Callback by callback {
+      override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (isListening) {
+          handleTouchEvent(event)
         }
+        return callback.dispatchTouchEvent(event)
       }
     }
+    interceptedWindow = window
+    originalWindowCallback = callback
+    interceptorCallback = interceptor
+    window.callback = interceptor
+    return true
   }
 
   private fun restoreOriginalWindowCallback() {
-    val activity = appContext.activityProvider?.currentActivity ?: return
-    activity.window.callback = originalWindowCallback ?: activity.window.callback
+    val window = interceptedWindow
+    if (window != null && window.callback === interceptorCallback) {
+      originalWindowCallback?.let { window.callback = it }
+    }
+    interceptedWindow = null
     originalWindowCallback = null
+    interceptorCallback = null
   }
 
   private fun handleTouchEvent(event: MotionEvent) {
     if (!isListening) return
 
+    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+      velocityTracker?.clear()
+    }
+    velocityTracker?.apply {
+      addMovement(event)
+      computeCurrentVelocity(1000)
+    }
+
     val currentTime = SystemClock.uptimeMillis()
-    val frameInterval = 1000 / targetFPS
+    val frameInterval = 1000L / targetFPS
+    val isMove = event.actionMasked == MotionEvent.ACTION_MOVE
 
-    if (currentTime - lastEventTime >= frameInterval) {
+    if (!isMove || currentTime - lastEventTime >= frameInterval) {
       lastEventTime = currentTime
-
-      velocityTracker?.apply {
-        addMovement(event)
-        computeCurrentVelocity(1000)
-      }
-
       val eventData = createEventData(event)
       sendEvent("onMotionEvent", eventData)
     }
@@ -140,17 +151,11 @@ class MotionEventModule : Module() {
         "yPrecision" to event.yPrecision,
         "velocityX" to (velocityTracker?.xVelocity ?: 0f),
         "velocityY" to (velocityTracker?.yVelocity ?: 0f),
-        "fps" to targetFPS
+        "targetFps" to targetFPS
       )
     } catch (e: Exception) {
       Log.e("MotionEventModule", "Error creating event data", e)
-      mapOf(
-        "error" to "Failed to create event data: ${e.message}",
-        "action" to event.action,
-        "x" to event.x,
-        "y" to event.y
-      )
+      throw e
     }
   }
 }
-

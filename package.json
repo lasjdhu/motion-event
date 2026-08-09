@@ -1,21 +1,30 @@
 {
   "name": "motion-event",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Lightweight and efficient Expo module for handling raw motion events on Android",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "expo-source": "./src/index.ts",
+      "default": "./build/index.js"
+    }
+  },
+  "sideEffects": false,
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "build": "expo-module build",
-    "clean": "expo-module clean",
-    "lint": "expo-module lint",
-    "test": "expo-module test",
-    "prepare": "expo-module prepare",
-    "prepublishOnly": "expo-module prepublishOnly",
-    "expo-module": "expo-module",
+    "build": "tsc -p tsconfig.json",
+    "clean": "tsc -b tsconfig.json --clean",
+    "lint": "eslint src/",
+    "prepare": "pnpm build",
+    "prepublishOnly": "pnpm clean && pnpm build",
     "style": "prettier --write .",
     "style:check": "prettier --check .",
-    "ts:check": "tsc --noEmit",
-    "android:example": "cd example && npx expo run:android"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "version:check": "node scripts/check-version.mjs",
+    "validate": "pnpm version:check && pnpm style:check && pnpm lint && pnpm typecheck && pnpm build && pnpm pack --dry-run",
+    "android:example": "pnpm --dir example android"
   },
   "platforms": [
     "android"
@@ -33,8 +42,10 @@
     "android/src/main/**/*",
     "android/build.gradle",
     "build/**/*",
+    "expo-module.config.json",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "readme-assets/example.gif"
   ],
   "repository": "https://github.com/lasjdhu/motion-event",
   "bugs": {
@@ -44,16 +55,19 @@
   "license": "MIT",
   "homepage": "https://github.com/lasjdhu/motion-event#readme",
   "devDependencies": {
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
-    "@types/react": "~18.3.12",
-    "expo": "~52.0.0",
-    "expo-module-scripts": "^4.0.3",
-    "prettier": "^3.5.0",
-    "react-native": "0.76.0"
+    "@types/react": "~19.2.18",
+    "expo": "^57.0.11",
+    "expo-modules-core": "~57.0.10",
+    "eslint": "~9.39.4",
+    "eslint-config-universe": "^16.0.0",
+    "prettier": "^3.9.6",
+    "react": "19.2.3",
+    "react-native": "0.86.2",
+    "typescript": "^5.9.2"
   },
   "peerDependencies": {
     "expo": "*",
+    "react": "*",
     "react-native": "*"
   }
 }

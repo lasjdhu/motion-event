@@ -1,36 +1,27 @@
-import { EventSubscription } from "expo-modules-core";
+import type { EventSubscription } from "expo-modules-core";
 
-import {
+import type {
   MotionEvent,
   MotionEventListener,
-  MotionEventName,
   MotionEventCoords,
   MotionEventProperties,
-  MotionEventActions,
-  ToolTypes,
-  MotionEventError,
-  MotionEventResult,
+  StartListeningOptions,
 } from "./MotionEvent.types";
+import { MotionEventActions, ToolTypes } from "./MotionEvent.types";
 import MotionEventModule from "./MotionEventModule";
 
-export function startListening(): void {
-  try {
-    MotionEventModule.startListening();
-  } catch (error) {
-    console.error("Failed to start listening:", error);
+export function startListening(options: StartListeningOptions = {}): void {
+  const targetFps = options.targetFps ?? 60;
+  if (!Number.isFinite(targetFps)) {
+    throw new RangeError("targetFps must be a finite number");
   }
+  MotionEventModule.startListening(
+    Math.min(120, Math.max(1, Math.round(targetFps))),
+  );
 }
 
 export function stopListening(): void {
-  try {
-    MotionEventModule.stopListening();
-  } catch (error) {
-    console.error("Failed to stop listening:", error);
-  }
-}
-
-export function setTargetFPS(fps: number): void {
-  MotionEventModule.setTargetFPS(fps);
+  MotionEventModule.stopListening();
 }
 
 export function addMotionEventListener(
@@ -45,8 +36,6 @@ export type {
   MotionEventCoords,
   MotionEventProperties,
   MotionEventListener,
-  MotionEventName,
-  MotionEventError,
-  MotionEventResult,
+  StartListeningOptions,
   EventSubscription,
 };
