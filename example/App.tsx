@@ -2,7 +2,6 @@ import {
   MotionEvent,
   startListening,
   stopListening,
-  setTargetFPS,
   addMotionEventListener,
 } from "motion-event";
 import React, { useEffect, useState, useMemo } from "react";
@@ -12,9 +11,9 @@ import {
   TextInput,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   Pressable,
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const EventDataSection = React.memo(
   ({ title, data }: { title: string; data: Record<string, string> }) => {
@@ -47,7 +46,7 @@ export default function App() {
       "Down Time": String(event.downTime),
       "Edge Flags": String(event.edgeFlags),
       "Event Time": String(event.eventTime),
-      "Current FPS": String(event.fps),
+      "Target FPS": String(event.targetFps),
       "Pointer Count": String(event.pointerCount),
       "Raw X": event.rawX.toFixed(2),
       "Raw Y": event.rawY.toFixed(2),
@@ -77,8 +76,7 @@ export default function App() {
   }, [event]);
 
   useEffect(() => {
-    startListening();
-    setTargetFPS(Number(fps));
+    startListening({ targetFps: Number(fps) });
 
     const subscription = addMotionEventListener((motionEvent) => {
       setEvent(motionEvent);
@@ -91,46 +89,51 @@ export default function App() {
   }, [fps]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.hStack}>
-          <Pressable onPress={startListening} style={styles.button}>
-            <Text style={styles.buttonLabel}>Start</Text>
-          </Pressable>
-          <Pressable onPress={stopListening} style={styles.button}>
-            <Text style={styles.buttonLabel}>Stop</Text>
-          </Pressable>
-        </View>
-        <View style={styles.hStack}>
-          <Text style={styles.label}>Target FPS:</Text>
-          <TextInput
-            style={styles.input}
-            value={fps}
-            onChangeText={setFps}
-            keyboardType="numeric"
-            maxLength={3}
-          />
-        </View>
-      </View>
-
-      <ScrollView style={styles.scrollView}>
-        {event && formattedGeneralData ? (
-          <View style={styles.eventContainer}>
-            <EventDataSection title="General" data={formattedGeneralData} />
-
-            {formattedPointerData.map((pointerData, index) => (
-              <EventDataSection
-                key={index}
-                title={`Pointer ${index + 1}`}
-                data={pointerData}
-              />
-            ))}
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.hStack}>
+            <Pressable
+              onPress={() => startListening({ targetFps: Number(fps) })}
+              style={styles.button}
+            >
+              <Text style={styles.buttonLabel}>Start</Text>
+            </Pressable>
+            <Pressable onPress={stopListening} style={styles.button}>
+              <Text style={styles.buttonLabel}>Stop</Text>
+            </Pressable>
           </View>
-        ) : (
-          <Text style={styles.waiting}>Waiting for motion events...</Text>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.hStack}>
+            <Text style={styles.label}>Target FPS:</Text>
+            <TextInput
+              style={styles.input}
+              value={fps}
+              onChangeText={setFps}
+              keyboardType="numeric"
+              maxLength={3}
+            />
+          </View>
+        </View>
+
+        <ScrollView style={styles.scrollView}>
+          {event && formattedGeneralData ? (
+            <View style={styles.eventContainer}>
+              <EventDataSection title="General" data={formattedGeneralData} />
+
+              {formattedPointerData.map((pointerData, index) => (
+                <EventDataSection
+                  key={index}
+                  title={`Pointer ${index + 1}`}
+                  data={pointerData}
+                />
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.waiting}>Waiting for motion events...</Text>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
