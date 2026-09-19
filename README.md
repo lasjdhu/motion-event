@@ -1,4 +1,4 @@
-# motion-event [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+# motion-event [![MIT License](https://img.shields.io/badge/license-MIT-22c55e.svg)](LICENSE)
 
 A lightweight Expo module for observing raw Android touch events at the app window.
 
@@ -13,19 +13,13 @@ Gesture libraries such as [React Native Gesture Handler](https://github.com/soft
 - Immediate delivery of gesture lifecycle events such as `DOWN`, `UP`, `CANCEL`, `POINTER_DOWN`, and `POINTER_UP`
 - Support for Expo development builds and bare React Native apps
 
-## Quick Start
+## Usage
 
 ```bash
 pnpm add motion-event
 ```
 
 The package contains native Android code. It requires an Expo development build or a bare React Native app, does not run in Expo Go, and does not support iOS or web.
-
-## Usage
-
-<p align="center">
-  <img alt="Motion event example" src="readme-assets/example.gif" width="250" />
-</p>
 
 ```tsx
 import { useEffect, useState } from "react";
@@ -72,6 +66,12 @@ export default function App() {
 ```
 
 The repository includes a complete example app in `example`. Run it with `pnpm android:example`.
+
+## Preview
+
+<p align="center">
+  <img alt="Live Android motion-event data" src="readme-assets/example.gif" width="250" />
+</p>
 
 ## API
 
