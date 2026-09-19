@@ -70,7 +70,7 @@ The repository includes a complete example app in `example`. Run it with `pnpm a
 ## Preview
 
 <p align="center">
-  <img alt="Live Android motion-event data" src="readme-assets/example.gif" width="250" />
+  <img alt="Live Android motion-event data" src="readme-assets/preview.gif" width="250" />
 </p>
 
 ## API

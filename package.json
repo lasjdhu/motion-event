@@ -45,7 +45,7 @@
     "expo-module.config.json",
     "LICENSE",
     "README.md",
-    "readme-assets/example.gif"
+    "readme-assets/preview.gif"
   ],
   "repository": "https://github.com/lasjdhu/motion-event",
   "bugs": {

@@ -55,3 +55,10 @@ yarn-error.log
 
 # Expo
 .expo/*
+
+# Local secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+google-services.json
